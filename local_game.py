@@ -8,39 +8,39 @@ def play(w='h', b='h'):
     actions = ""
     if w == 'h' and b == 'h': # human vs human
         computer = NaiveAgent()
-        display(computer.state)
-        while not is_terminal(computer.state) and not is_repetition(actions):
+        display(computer)
+        while not is_terminal(computer) and not is_repetition(actions):
             action = get_move(computer)
             actions += action
             computer.receive_action(action)
-            display(computer.state)
+            display(computer)
     elif w == 'c' and b == 'c': # computer vs computer
-        computer = NaiveAgent()
-        display(computer.state)
-        while not is_terminal(computer.state) and not is_repetition(actions):
-            action = computer.take_action(search_depth=6)
-            actions += action
-            print("Computer played: {}".format(action))
-            display(computer.state)
+        # computer = NaiveAgent()
+        # display(computer)
+        # while not is_terminal(computer) and not is_repetition(actions):
+        #     action = computer.take_action(search_depth=7)
+        #     actions += action
+        #     print("Computer played: {}".format(action))
+        #     display(computer)
+        pass
     else:
-        computer_color = 'w' if w == 'c' else 'b'
+        computer_color = 0 if w == 'c' else 1
         computer = NaiveAgent(color=computer_color)
-        display(computer.state)
-        while not is_terminal(computer.state) and not is_repetition(actions):
-            print(computer.state)
-            if computer.state[2] == computer_color:
+        display(computer)
+        while not is_terminal(computer) and not is_repetition(actions):
+            if computer.playing == computer_color:
                 action = computer.take_action()
                 actions += action
                 print("Computer played: {}".format(action))
-                display(computer.state)
+                display(computer)
             else:
                 action = get_move(computer)
                 actions += action
                 computer.receive_action(action)
-                display(computer.state)
+                display(computer)
     if is_repetition(actions):
         print("Draw!")
-    elif computer.state[2] == 'b':
+    elif computer.playing == 1:
         print("White wins!")
     else:
         print("Black wins!")
