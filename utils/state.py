@@ -20,19 +20,19 @@ def mate(cells):
 def mate_in_1(cells, opponent, n=5, m=4):
     row = get_row(opponent, 2)
     if row:
-        if __can_complete(row, [c for c in opponent if c not in row], cells, 'r', n, m):
+        if __can_complete(row, [c for c in opponent if c not in row], cells, 'r', False, n, m):
             return True
     col = get_col(opponent, 2)
     if col:
-        if __can_complete(col, [c for c in opponent if c not in col], cells, 'c', n, m):
+        if __can_complete(col, [c for c in opponent if c not in col], cells, 'c', False, n, m):
             return True
     diag_pp = get_diag_pp(opponent, 2)
     if diag_pp:
-        if __can_complete(diag_pp, [c for c in opponent if c not in diag_pp], cells, 'p', n, m):
+        if __can_complete(diag_pp, [c for c in opponent if c not in diag_pp], cells, 'p', False, n, m):
             return True
     diag_pn = get_diag_pn(opponent, 2)
     if diag_pn:
-        if __can_complete(diag_pn, [c for c in opponent if c not in diag_pn], cells, 'n', n, m):
+        if __can_complete(diag_pn, [c for c in opponent if c not in diag_pn], cells, 'n', False, n, m):
             return True
     return False
 
@@ -55,13 +55,13 @@ def mate_in_2(cells, opponent, n=5, m=4):
             return True
     return False
 
-def __can_complete(run, options, avoid, run_type, n=5, m=4):
+def __can_complete(run, options, avoid, run_type, block=True, n=5, m=4):
     missing_cells = __get_missing_cells(run, run_type, n, m)
     can_complete = False
     for mc in missing_cells:
         if mc in avoid: continue
         for nc in __get_neighbor_cells(mc, n, m):
-            if nc in avoid:
+            if block and nc in avoid:
                 return False
             if not can_complete and nc in options:
                 can_complete = True

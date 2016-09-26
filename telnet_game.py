@@ -24,7 +24,7 @@ def play(gameserv, color, big):
             action = gameserv.receive_action()
             print("Opponent played: {}".format(action))
             computer.receive_action(action)
-            display(computer.black, computer.white, n, m)
+            display(computer.white, computer.black, n, m)
     if computer.playing == 1:
         print("White wins!")
     else:
