@@ -1,95 +1,107 @@
-from utils import *
+import math
+
+from utils.interface import action_string
+from utils.state import get_actions, is_winning
+from utils.runs import num_runs
 
 action_mappings = {'N': (0, -1), 'E': (1, 0), 'S': (0, 1), 'W': (-1, 0)}
-inverse_mappings = {(0, -1): 'N', (1, 0): 'E', (0, 1): 'S', (-1, 0): 'W'}
 
-class NaiveAgent(object):
+class SmartAgent(object):
 
-    def __init__(self, state=(('11', '13', '52', '54'), ('12', '14', '51', '53'), 'w'), color='w'):
-        self.state = state
+    def __init__(self, color=0): # white=0 black=1
+        self.white = [(1, 1), (1, 3), (5, 2), (5, 4)] # white pieces
+        self.black = [(1, 2), (1, 4), (5, 1), (5, 3)] # black pieces
+        self.playing = 0 # color to play
         self.color = color
+        self.pieces = self.white if color == 0 else self.black
+        self.opponent = self.white if color == 1 else self.black
 
     def receive_action(self, action):
-        action_cell = action[:-1]
+        action_cell = (int(action[:-1][0]), int(action[:-1][1]))
         action_map = action_mappings[action[-1]]
-        action_result = str(int(action_cell[0]) + action_map[0]) + \
-                        str(int(action_cell[1]) + action_map[1])
-        if self.state[2] == 'w':
-            action_cell_index = self.state[0].index(action_cell)
-            new_white = self.state[0][:action_cell_index] + (action_result,) + self.state[0][action_cell_index+1:]
-            self.state = (new_white, self.state[1], 'b')
+        action_result = (int(action_cell[0]) + action_map[0],
+                         int(action_cell[1]) + action_map[1])
+        if self.playing == 0:
+            action_cell_index = self.white.index(action_cell)
+            self.white[action_cell_index] = action_result
+            self.playing = 1
         else:
-            action_cell_index = self.state[1].index(action_cell)
-            new_black = self.state[1][:action_cell_index] + (action_result,) + self.state[1][action_cell_index+1:]
-            self.state = (self.state[0], new_black, 'w')
+            action_cell_index = self.black.index(action_cell)
+            self.black[action_cell_index] = action_result
+            self.playing = 0
 
-    def take_action(self, search_depth=8, alphabeta=True):
-        children = get_children(self.state)
-        if alphabeta:
-            action_vals = [self.alphabeta_search(c, search_depth-1, float("-inf"), float("inf")) for c in children]
-        else:
-            action_vals = [self.search(c, search_depth-1) for c in children]
-        print([self.action_to(s) for s in children])
+    def take_action(self, search_depth=7):
+        actions = get_actions(self.pieces, self.opponent)
+        action_vals = [self.alphabeta_search(a, search_depth-1, float("-inf"), float("inf")) for a in actions]
+        print([action_string(self.pieces[a[0]], a[1]) for a in actions])
         print(action_vals)
-        if self.state[2] == 'w':
+        if self.color == 0:
             best_value = max(action_vals)
         else:
             best_value = min(action_vals)
-        s = children[action_vals.index(best_value)]
-        action = self.action_to(s)
-        self.state = s
+        best_action = actions[action_vals.index(best_value)]
+        action = action_string(self.pieces[best_action[0]], best_action[1])
+        self.pieces[best_action[0]] = best_action[1]
+        self.playing = 1 if self.color == 0 else 0
         return action
 
-    def action_to(self, end_state):
-        if self.state[2] == 'w':
-            white_start = set(self.state[0])
-            white_end = set(end_state[0])
-            start_cell = (white_start - white_end).pop()
-            end_cell = (white_end - white_start).pop()
+    def alphabeta_search(self, action, depth, alpha, beta):
+        if self.playing == 0:
+            self.playing = 1
+            tmp_cell = self.white[action[0]]
+            self.white[action[0]] = action[1]
         else:
-            black_start = set(self.state[1])
-            black_end = set(end_state[1])
-            start_cell = (black_start - black_end).pop()
-            end_cell = (black_end - black_start).pop()
-        return start_cell + inverse_mappings[(int(end_cell[0]) - int(start_cell[0]), int(end_cell[1]) - int(start_cell[1]))]
+            self.playing = 0
+            tmp_cell = self.black[action[0]]
+            self.black[action[0]] = action[1]
 
-    def search(self, state, depth):
-        if state[2] == 'b' and is_winning(state[0]): return 1000 + depth
-        elif state[2] == 'w' and is_winning(state[1]): return -1000 - depth
-        if depth == 0:
-            return self.heuristic(state)
+        if self.playing == 1 and is_winning(self.white, self.black):
+            h = 1000 + depth
+        elif self.playing == 0 and is_winning(self.black, self.white):
+            h = -1000 - depth
+        elif depth == 0:
+            h = self.heuristic()
         else:
-            if state[2] == 'w':
+            if self.playing == 0:
                 h = float("-inf")
-                for c in get_children(state):
-                    h = max(h, self.search(c, depth-1))
-            else:
-                h = float("inf")
-                for c in get_children(state):
-                    h = min(h, self.search(c, depth-1))
-        return h
-
-    def alphabeta_search(self, state, depth, alpha, beta):
-        if state[2] == 'b' and is_winning(state[0]): return 1000 + depth
-        elif state[2] == 'w' and is_winning(state[1]): return -1000 - depth
-        if depth == 0:
-            return self.heuristic(state)
-        else:
-            if state[2] == 'w':
-                h = float("-inf")
-                for c in get_children(state):
-                    h = max(h, self.alphabeta_search(c, depth-1, alpha, beta))
+                for a in get_actions(self.white, self.black):
+                    h = max(h, self.alphabeta_search(a, depth-1, alpha, beta))
                     alpha = max(alpha, h)
                     if beta <= alpha: break
             else:
                 h = float("inf")
-                for c in get_children(state):
-                    h = min(h, self.alphabeta_search(c, depth-1, alpha, beta))
+                for a in get_actions(self.black, self.white):
+                    h = min(h, self.alphabeta_search(a, depth-1, alpha, beta))
                     beta = min(beta, h)
                     if beta <= alpha: break
+
+        if self.playing == 0:
+            self.playing = 1
+            self.black[action[0]] = tmp_cell
+        else:
+            self.playing = 0
+            self.white[action[0]] = tmp_cell
         return h
 
-    def heuristic(self, state):
-        white2runs = num_rows(state[0], 2) + num_cols(state[0], 2) + num_diags(state[0], 2)
-        black2runs = num_rows(state[1], 2) + num_cols(state[1], 2) + num_diags(state[1], 2)
-        return white2runs - black2runs
+    def heuristic(self):
+        white2runs = num_runs(self.white, 2)
+        black2runs = num_runs(self.black, 2)
+        position_score = 0
+        if self.color == 0:
+            for c in self.white:
+                position_score += cell_score(c) / 10
+        else:
+            for c in self.black:
+                position_score -= cell_score(c) / 10
+        return position_score + white2runs - black2runs
+
+def cell_score(c, n=5, m=4): # give score to cell based on distance from edge
+    xscore = min(c[0] - 1, n - c[0])
+    yscore = min(c[1] - 1, m - c[1])
+    return math.sqrt(xscore * xscore + yscore * yscore)
+
+# for i in range(1,5):
+#     for j in range(1,6):
+#         print(cell_score((j, i)), end=" ")
+#         # print(j, i)
+#     print()

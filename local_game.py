@@ -1,43 +1,61 @@
 import argparse
 
+from time import clock
+
 from naive_agent import NaiveAgent
-from utils import is_terminal, is_repetition
-from interface import *
+from smart_agent import SmartAgent
+
+from utils.state import is_terminal, is_repetition
+from utils.interface import display, get_move
 
 def play(w='h', b='h'):
     actions = ""
     if w == 'h' and b == 'h': # human vs human
         computer = NaiveAgent()
-        display(computer)
-        while not is_terminal(computer) and not is_repetition(actions):
-            action = get_move(computer)
+        display(computer.white, computer.black)
+        while not is_terminal(computer.white, computer.black, computer.playing) and not is_repetition(actions):
+            action = get_move(computer.white, computer.black, computer.playing)
             actions += action
             computer.receive_action(action)
-            display(computer)
+            display(computer.white, computer.black)
     elif w == 'c' and b == 'c': # computer vs computer
-        # computer = NaiveAgent()
-        # display(computer)
-        # while not is_terminal(computer) and not is_repetition(actions):
-        #     action = computer.take_action(search_depth=7)
-        #     actions += action
-        #     print("Computer played: {}".format(action))
-        #     display(computer)
-        pass
+        c1 = NaiveAgent(color=1)
+        c2 = SmartAgent(color=0)
+        display(c1.white, c1.black)
+        t = clock()
+        while not is_terminal(c1.white, c1.black, c1.playing) and not is_repetition(actions):
+            if c1.playing == c1.color:
+                action = c1.take_action(search_depth=7)
+                print(clock() - t)
+                t = clock()
+                c2.receive_action(action)
+                actions += action
+                print("C1 ({}) played: {}".format(c1.color, action))
+                display(c1.white, c1.black)
+            else:
+                action = c2.take_action(search_depth=7)
+                print(clock() - t)
+                t = clock()
+                c1.receive_action(action)
+                actions += action
+                print("C2 ({}) played: {}".format(c2.color, action))
+                display(c2.white, c2.black)
+        computer = c1
     else:
         computer_color = 0 if w == 'c' else 1
         computer = NaiveAgent(color=computer_color)
-        display(computer)
-        while not is_terminal(computer) and not is_repetition(actions):
+        display(computer.white, computer.black)
+        while not is_terminal(computer.white, computer.black, computer.playing) and not is_repetition(actions):
             if computer.playing == computer_color:
                 action = computer.take_action()
                 actions += action
                 print("Computer played: {}".format(action))
-                display(computer)
+                display(computer.white, computer.black)
             else:
-                action = get_move(computer)
+                action = get_move(computer.white, computer.black, computer.playing)
                 actions += action
                 computer.receive_action(action)
-                display(computer)
+                display(computer.white, computer.black)
     if is_repetition(actions):
         print("Draw!")
     elif computer.playing == 1:

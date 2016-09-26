@@ -5,17 +5,16 @@ class GameServer(object):
     def __init__(self, gameID, color, server, port):
         print("Connecting to {}:{}...".format(server, port))
         self.tn = Telnet(server, port)
-        c = "white" if color == 'w' else "black"
-        msg = "{} {}\n".format(gameID, c).encode('ASCII')
-        print("Starting game '{}' as {}...".format(gameID, c))
+        msg = "{} {}\n".format(gameID, color).encode('ASCII')
+        print("Starting game '{}' as {}...".format(gameID, color))
         self.tn.write(msg)
         return_msg = self.tn.read_until(b'\n')
         if return_msg == msg:
             print("Game successfully started.")
-            if color == 'w':
+            if color == "white":
                 print("Preparing first move.")
             else:
-                print("Waiting for opponents move.")
+                print("Waiting for opponent's move.")
         else:
             print(return_msg.decode())
             raise Exception("Unable to start game.")
@@ -29,5 +28,9 @@ class GameServer(object):
             raise Exception("Unable to send action.")
 
     def receive_action(self):
-        action = self.tn.read_until(b'\n')
-        return action.decode()[:-1]
+        msg = self.tn.read_until(b'\n')
+        action = msg.decode()[:-1]
+        if len(action) != 3:
+            print(action)
+            raise Exception("Invalid action received.")
+        return action

@@ -1,4 +1,6 @@
-from utils import *
+from utils.interface import action_string
+from utils.state import get_actions, is_winning
+from utils.runs import num_runs
 
 action_mappings = {'N': (0, -1), 'E': (1, 0), 'S': (0, 1), 'W': (-1, 0)}
 
@@ -54,9 +56,9 @@ class NaiveAgent(object):
             tmp_cell = self.black[action[0]]
             self.black[action[0]] = action[1]
 
-        if self.playing == 1 and is_winning(self.white):
+        if self.playing == 1 and is_winning(self.white, self.black):
             h = 1000 + depth
-        elif self.playing == 0 and is_winning(self.black):
+        elif self.playing == 0 and is_winning(self.black, self.white):
             h = -1000 - depth
         elif depth == 0:
             h = self.heuristic()
@@ -88,9 +90,9 @@ class NaiveAgent(object):
             tmp_cell = self.black[action[0]]
             self.black[action[0]] = action[1]
 
-        if self.playing == 1 and is_winning(self.white):
+        if self.playing == 1 and is_winning(self.white, self.black):
             h = 1000 + depth
-        elif self.playing == 0 and is_winning(self.black):
+        elif self.playing == 0 and is_winning(self.black, self.white):
             h = -1000 - depth
         elif depth == 0:
             h = self.heuristic()
@@ -117,6 +119,6 @@ class NaiveAgent(object):
         return h
 
     def heuristic(self):
-        white2runs = num_rows(self.white, 2) + num_cols(self.white, 2) + num_diags(self.white, 2)
-        black2runs = num_rows(self.black, 2) + num_cols(self.black, 2) + num_diags(self.black, 2)
+        white2runs = num_runs(self.white, 2)
+        black2runs = num_runs(self.black, 2)
         return white2runs - black2runs

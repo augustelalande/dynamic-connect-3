@@ -1,1 +1,1 @@
-# dynamic-connect-3
+# Dynamic Connect 3
