@@ -1,10 +1,10 @@
 from utils.state import get_actions
 
-def get_move(white, black, playing):
+def get_move(white, black, playing, n=5, m=4):
     player_color = "White" if playing == 0 else "Black"
     player = white if playing == 0 else black
     opponent = white if playing == 1 else black
-    possible_moves = [action_string(player[a[0]], a[1]) for a in get_actions(player, opponent)]
+    possible_moves = [action_string(player[a[0]], a[1]) for a in get_actions(player, opponent, n, m)]
     while True:
         move = input("{} to play. Enter a valid move: ".format(player_color))
         move = move.upper()

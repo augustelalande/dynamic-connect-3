@@ -1,14 +1,22 @@
 from utils.interface import action_string
-from utils.state import get_actions, is_winning
+from utils.state import get_actions, mate
 from utils.runs import num_runs
 
 action_mappings = {'N': (0, -1), 'E': (1, 0), 'S': (0, 1), 'W': (-1, 0)}
 
 class NaiveAgent(object):
 
-    def __init__(self, color=0): # white=0 black=1
-        self.white = [(1, 1), (1, 3), (5, 2), (5, 4)] # white pieces
-        self.black = [(1, 2), (1, 4), (5, 1), (5, 3)] # black pieces
+    def __init__(self, color=0, bigboard=0): # white=0 black=1
+        if bigboard:
+            self.n = 7
+            self.m = 6
+            self.white = [(2, 2), (2, 4), (6, 3), (6, 5)]
+            self.black = [(2, 3), (2, 5), (6, 2), (6, 4)]
+        else:
+            self.n = 5
+            self.m = 4
+            self.white = [(1, 1), (1, 3), (5, 2), (5, 4)]
+            self.black = [(1, 2), (1, 4), (5, 1), (5, 3)]
         self.playing = 0 # color to play
         self.color = color
         self.pieces = self.white if color == 0 else self.black
@@ -29,7 +37,7 @@ class NaiveAgent(object):
             self.playing = 0
 
     def take_action(self, search_depth=7, alphabeta=True):
-        actions = get_actions(self.pieces, self.opponent)
+        actions = get_actions(self.pieces, self.opponent, self.n, self.m)
         if alphabeta:
             action_vals = [self.alphabeta_search(a, search_depth-1, float("-inf"), float("inf")) for a in actions]
         else:
@@ -56,9 +64,9 @@ class NaiveAgent(object):
             tmp_cell = self.black[action[0]]
             self.black[action[0]] = action[1]
 
-        if self.playing == 1 and is_winning(self.white, self.black):
+        if self.playing == 1 and mate(self.white):
             h = 1000 + depth
-        elif self.playing == 0 and is_winning(self.black, self.white):
+        elif self.playing == 0 and mate(self.black):
             h = -1000 - depth
         elif depth == 0:
             h = self.heuristic()
@@ -90,9 +98,9 @@ class NaiveAgent(object):
             tmp_cell = self.black[action[0]]
             self.black[action[0]] = action[1]
 
-        if self.playing == 1 and is_winning(self.white, self.black):
+        if self.playing == 1 and mate(self.white):
             h = 1000 + depth
-        elif self.playing == 0 and is_winning(self.black, self.white):
+        elif self.playing == 0 and mate(self.black):
             h = -1000 - depth
         elif depth == 0:
             h = self.heuristic()
