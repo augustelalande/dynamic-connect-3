@@ -67,19 +67,20 @@ class SmartAgent(object):
         playing = self.playing
         while clock() - start < timeout and abs(result_score) < 1000 and search_depth <= max_depth:
             sequence = set()
+            self.nodes_searched = 0
             result = self.alphabeta_search(search_depth, white, black, playing,
                                            sequence, max_depth=search_depth)
             if clock() - start < timeout:
                 self.best_action = result[-1]
                 result_score = result[0]
-                print(search_depth, result_score, self.best_action)
-                # if self.best_action == (1, (2, 3)):
-                #     print("lol", self.nodes[(((3, 1), (4, 2), (1, 3), (5, 4)), ((5, 1), (3, 2), (5, 3), (1, 4)), 1)])
+                print("depth: {}\nnodes searched: {}\nestimated utility: {}\nbest move: {}\n".format(
+                        search_depth, self.nodes_searched, result_score,
+                        action_string(self.pieces[self.best_action[0]], self.best_action[1])))
                 search_depth += 1
 
     def alphabeta_search(self, depth, white, black, playing, move_sequence,
                          alpha=float('-inf'), beta=float('inf'), max_depth=1000):
-        # print(move_sequence)
+        self.nodes_searched += 1
         action = None
 
         state = (tuple(sorted(white, key=lambda x: x[0] + 10 * x[1])),
@@ -92,7 +93,7 @@ class SmartAgent(object):
             (self.nodes[state][2] >= depth): # or abs(self.nodes[state][0]) >= 1000):
             move_sequence.remove(state)
             return (self.nodes[state][0], self.nodes[state][1])
-        elif playing == 1 and is_winning(white):
+        if playing == 1 and is_winning(white):
             h = 1000 + depth
         elif playing == 0 and is_winning(black):
             h = -1000 - depth
@@ -105,7 +106,7 @@ class SmartAgent(object):
                 n = 5
                 m = 4
             else:
-                if self.turn > 6:
+                if self.turn > 5:
                     xstart = 1
                     ystart = 1
                     n = 7

@@ -82,7 +82,7 @@ def scored_runs(cells, n=5, m=4):
     return score
 
 def _distance(c1, c2):
-    return sqrt((c1[0] - c2[0]) ** 2 + (c1[1] - c2[1]) ** 2)
+    return abs(c1[0] - c2[0]) + abs(c1[1] - c2[1])
 
 def pattern_check(cells):
     """Check the cells for a specific pattern which I found to be good.

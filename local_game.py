@@ -54,11 +54,13 @@ def play(w='h', b='h', big=0):
         computer = c1
     else: # computer vs human
         computer_color = 0 if w == 'c' else 1
-        computer = NaiveAgent(color=computer_color, bigboard=big)
+        computer = SmartAgent(color=computer_color, bigboard=big)
         display(computer.white, computer.black, n, m)
         while not is_terminal(computer.white, computer.black, computer.playing) and not is_repetition(actions):
             if computer.playing == computer_color:
-                action = computer.take_action(search_depth=9, alphabeta=True)
+                t = clock()
+                action = computer.take_action()
+                print(clock() - t)
                 actions += action
                 print("Computer played: {}".format(action))
                 display(computer.white, computer.black, n, m)
