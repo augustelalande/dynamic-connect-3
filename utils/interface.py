@@ -1,6 +1,23 @@
+"""These utility functions are used for interaction purposes.
+
+"""
+
 from utils.state import get_actions
 
 def get_move(white, black, playing, n=5, m=4):
+    """Get a move from the human user and check its validity.
+
+    Args:
+        white (list): White pieces position.
+        black (list): Black pieces position.
+        playing (int): Identity of the player whose turn it is to make a move
+        n (int): width of grid
+        m (int): height of grid
+
+    Returns:
+        Human players move.
+
+    """
     player_color = "White" if playing == 0 else "Black"
     player = white if playing == 0 else black
     opponent = white if playing == 1 else black
@@ -14,6 +31,15 @@ def get_move(white, black, playing, n=5, m=4):
             print("That's not a valid move!!")
 
 def display(white, black, n=5, m=4):
+    """Pretty print the current position.
+
+    Args:
+        white (list): White pieces position.
+        black (list): Black pieces position.
+        n (int): width of grid
+        m (int): height of grid
+
+    """
     blank = ['_,' for i in range(n * m)]
     for w in white:
         index = w[0] - 1 + (w[1] - 1) * n
@@ -29,4 +55,14 @@ def display(white, black, n=5, m=4):
 inverse_mappings = {(0, -1): 'N', (1, 0): 'E', (0, 1): 'S', (-1, 0): 'W'}
 
 def action_string(start_cell, end_cell):
+    """Convert an agent action to a string.
+
+    Args:
+        start_cell: piece to move.
+        end_cell: square to go to.
+
+    Returns:
+        action string.
+
+    """
     return "{}{}".format(*start_cell) + inverse_mappings[(end_cell[0] - start_cell[0], end_cell[1] - start_cell[1])]

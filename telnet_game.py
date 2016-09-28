@@ -1,11 +1,20 @@
 #!/usr/bin/python3
+"""This script can be used to initiate a telnet game with a specific gameID and color.
+
+Example:
+    To initiate a game execute the following:
+
+        $ python3 telnet_game.py <gameID> <color>
+
+"""
 
 import argparse
 
+from naive_agent import NaiveAgent
 from smart_agent import SmartAgent
 from game_server import GameServer
 
-from utils.state import is_terminal
+from utils.state import is_terminal, is_repetition
 from utils.interface import display
 
 def play(gameserv, color, big):
@@ -13,14 +22,17 @@ def play(gameserv, color, big):
     n = 7 if big else 5
     m = 6 if big else 4
     depth= 7 if big else 9
-    while not is_terminal(computer.white, computer.black, computer.playing):
+    actions = ""
+    while not is_terminal(computer.white, computer.black, computer.playing) and not is_repetition(actions):
         if computer.playing == color:
-            action = computer.take_action(search_depth=depth)
+            action = computer.take_action()
+            actions += action
             gameserv.send_action(action)
             print("Player played: {}".format(action))
             display(computer.white, computer.black, n, m)
         else:
             action = gameserv.receive_action()
+            actions += action
             print("Opponent played: {}".format(action))
             computer.receive_action(action)
             display(computer.white, computer.black, n, m)

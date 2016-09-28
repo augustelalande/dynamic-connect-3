@@ -1,4 +1,17 @@
+"""These utility functions are used to know everything about runs.
+
+"""
+
 def is_row(cells):
+    """Check if run of 3 exists in cell rows.
+
+    Args:
+        cells (list): Cells to check.
+
+    Returns:
+        Whether the cells form a 3 run row.
+
+    """
     cells = sorted(cells, key=lambda x: x[1] * 10 + x[0])
     sequence_count = 1
     for i in range(len(cells)-1):
@@ -11,6 +24,15 @@ def is_row(cells):
     return False
 
 def is_col(cells):
+    """Check if run of 3 exists in cell columns.
+
+    Args:
+        cells (list): Cells to check.
+
+    Returns:
+        Whether the cells form a 3 run column.
+
+    """
     cells = sorted(cells, key=lambda x: x[0] * 10 + x[1])
     sequence_count = 1
     for i in range(len(cells)-1):
@@ -23,6 +45,15 @@ def is_col(cells):
     return False
 
 def is_diag(cells):
+    """Check if run of 3 exists in cell diags.
+
+    Args:
+        cells (list): Cells to check.
+
+    Returns:
+        Whether the cells form a 3 run diagonal.
+
+    """
     diag_pp = sorted(cells, key=lambda x: x[0] - x[1] + x[1] / 10)
     diag_pn = sorted(cells, key=lambda x: x[0] + x[1] + x[1] / 10)
     sequence_count_pp = 1
@@ -41,9 +72,29 @@ def is_diag(cells):
     return False
 
 def num_runs(cells, length):
+    """Calculate number of runs of certain length.
+
+    Args:
+        cells (list): Cells to check.
+        length (int): length of run to count.
+
+    Returns:
+        Number of runs of length length.
+
+    """
     return num_rows(cells, length) + num_cols(cells, length) + num_diags(cells, length)
 
 def num_rows(cells, length):
+    """Calculate number of row runs of certain length.
+
+    Args:
+        cells (list): Cells to check.
+        length (int): length of run to count.
+
+    Returns:
+        Number of row runs of length length.
+
+    """
     num = 0
     cells = sorted(cells, key=lambda x: x[1] * 10 + x[0])
     sequence_count = 1
@@ -58,6 +109,16 @@ def num_rows(cells, length):
     return num
 
 def num_cols(cells, length):
+    """Calculate number of column runs of certain length.
+
+    Args:
+        cells (list): Cells to check.
+        length (int): length of run to count.
+
+    Returns:
+        Number of column runs of length length.
+
+    """
     num = 0
     cells = sorted(cells, key=lambda x: x[0] * 10 + x[1])
     sequence_count = 1
@@ -72,6 +133,16 @@ def num_cols(cells, length):
     return num
 
 def num_diags(cells, length):
+    """Calculate number of diagonal runs of certain length.
+
+    Args:
+        cells (list): Cells to check.
+        length (int): length of run to count.
+
+    Returns:
+        Number of diagonal runs of length length.
+
+    """
     num = 0
     diag_pp = sorted(cells, key=lambda x: x[0] - x[1] + x[1] / 10)
     diag_pn = sorted(cells, key=lambda x: x[0] + x[1] + x[1] / 10)
@@ -95,6 +166,16 @@ def num_diags(cells, length):
     return num
 
 def get_row(cells, length):
+    """Get cells which form a row run of a certain length.
+
+    Args:
+        cells (list): Cells to check.
+        length (int): length of run to count.
+
+    Returns:
+        Cells forming row run.
+
+    """
     cells = sorted(cells, key=lambda x: x[1] * 10 + x[0])
     row = [cells[0]]
     for i in range(len(cells)-1):
@@ -107,6 +188,16 @@ def get_row(cells, length):
     return []
 
 def get_col(cells, length):
+    """Get cells which form a column run of a certain length.
+
+    Args:
+        cells (list): Cells to check.
+        length (int): length of run to count.
+
+    Returns:
+        Cells forming column run.
+
+    """
     cells = sorted(cells, key=lambda x: x[0] * 10 + x[1])
     col = [cells[0]]
     for i in range(len(cells)-1):
@@ -119,6 +210,16 @@ def get_col(cells, length):
     return []
 
 def get_diag_pp(cells, length):
+    """Get cells which form a diagonal run in +x +y direction of a certain length.
+
+    Args:
+        cells (list): Cells to check.
+        length (int): length of run to count.
+
+    Returns:
+        Cells forming diagonal run  in +x +y direction.
+
+    """
     cells = sorted(cells, key=lambda x: x[0] - x[1] + x[1] / 10)
     diag_pp = [cells[0]]
     for i in range(len(cells)-1):
@@ -131,6 +232,16 @@ def get_diag_pp(cells, length):
     return []
 
 def get_diag_pn(cells, length):
+    """Get cells which form a diagonal run in +x -y direction of a certain length.
+
+    Args:
+        cells (list): Cells to check.
+        length (int): length of run to count.
+
+    Returns:
+        Cells forming diagonal run  in +x -y direction.
+
+    """
     cells = sorted(cells, key=lambda x: x[0] + x[1] + x[1] / 10)
     diag_pn = [cells[0]]
     for i in range(len(cells)-1):

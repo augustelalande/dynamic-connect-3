@@ -66,27 +66,31 @@ class SmartAgent(object):
         black = copy(self.black)
         playing = self.playing
         while clock() - start < timeout and abs(result_score) < 1000 and search_depth <= max_depth:
-            result = self.alphabeta_search(search_depth, white, black, playing, max_depth=search_depth)
+            sequence = set()
+            result = self.alphabeta_search(search_depth, white, black, playing,
+                                           sequence, max_depth=search_depth)
             if clock() - start < timeout:
                 self.best_action = result[-1]
                 result_score = result[0]
                 print(search_depth, result_score, self.best_action)
-                if self.best_action == (1, (2, 3)):
-                    print("lol", self.nodes[(((3, 1), (4, 2), (1, 3), (5, 4)), ((5, 1), (3, 2), (5, 3), (1, 4)), 1)])
+                # if self.best_action == (1, (2, 3)):
+                #     print("lol", self.nodes[(((3, 1), (4, 2), (1, 3), (5, 4)), ((5, 1), (3, 2), (5, 3), (1, 4)), 1)])
                 search_depth += 1
 
-    def alphabeta_search(self, depth, white, black, playing, alpha=float('-inf'), beta=float('inf'), max_depth=1000):
-
+    def alphabeta_search(self, depth, white, black, playing, move_sequence,
+                         alpha=float('-inf'), beta=float('inf'), max_depth=1000):
+        # print(move_sequence)
         action = None
 
         state = (tuple(sorted(white, key=lambda x: x[0] + 10 * x[1])),
                  tuple(sorted(black, key=lambda x: x[0] + 10 * x[1])), playing)
 
-        # if state in self.sequence: return (0, )
-        # self.sequence.add(state)
+        if state in move_sequence: return (0, )
+        move_sequence.add(state)
 
         if state in self.nodes and \
             (self.nodes[state][2] >= depth): # or abs(self.nodes[state][0]) >= 1000):
+            move_sequence.remove(state)
             return (self.nodes[state][0], self.nodes[state][1])
         elif playing == 1 and is_winning(white):
             h = 1000 + depth
@@ -117,7 +121,7 @@ class SmartAgent(object):
 
                 for a in get_actions(white, black, n, m, xstart, ystart):
                     modified_cell = self.__apply_action(a, white)
-                    v = self.alphabeta_search(depth - 1, white, black, 1, alpha, beta)
+                    v = self.alphabeta_search(depth - 1, white, black, 1, move_sequence, alpha, beta)
                     if v[0] > h[0]:
                         h = v
                         action = a
@@ -136,7 +140,7 @@ class SmartAgent(object):
 
                 for a in get_actions(black, white, n, m, xstart, ystart):
                     modified_cell = self.__apply_action(a, black)
-                    v = self.alphabeta_search(depth - 1, white, black, 0, alpha, beta)
+                    v = self.alphabeta_search(depth - 1, white, black, 0, move_sequence, alpha, beta)
                     if v[0] < h[0]:
                         h = v
                         action = a
@@ -154,7 +158,7 @@ class SmartAgent(object):
 
         if type(h) is float or type(h) is int: h = (h, )
         self.nodes[state] = (h[0], action, depth)
-        # self.sequence.remove(state)
+        move_sequence.remove(state)
         return (*h, action)
 
     def __apply_action(self, action, cells):
@@ -167,28 +171,34 @@ class SmartAgent(object):
 
     def heuristic(self, white, black, playing):
         h = 0
-        h += num_runs(white, 2) # white 2-runs
-        h -= num_runs(black, 2) # black 2-runs
+        # h += num_runs(white, 2) # white 2-runs
+        # h -= num_runs(black, 2) # black 2-runs
 
-        h += num_diags(white, 2) # white 2-runs
-        h -= num_diags(black, 2) # black 2-runs
+        # h += num_diags(white, 2) # white 2-runs
+        # h -= num_diags(black, 2) # black 2-runs
 
         # h += position_score(white, self.n, self.m)
         # h -= position_score(black, self.n, self.m)
 
         # trapped_white_weight = 10 if self.color == 0 else 5
         # trapped_black_weight = 10 if self.color == 1 else 5
-        h += trapped_pieces(black, white, self.n, self.m)
-        h -= trapped_pieces(white, black, self.n, self.m)
+        # h += trapped_pieces(black, white, self.n, self.m)
+        # h -= trapped_pieces(white, black, self.n, self.m)
 
-        if playing == 0:
-            if mate_in_1(white, black, self.n, self.m):
-                h += 900
-            elif mate_in_2(black, white, self.n, self.m):
-                h -= 800
-        else:
-            if mate_in_1(black, white, self.n, self.m):
-                h -= 900
-            elif mate_in_2(white, black, self.n, self.m):
-                h += 800
+        h += scored_runs(white, self.n, self.m)
+        h -= scored_runs(black, self.n, self.m)
+
+        if pattern_check(white): h += 500
+        if pattern_check(black): h -= 500
+
+        # if playing == 0:
+        #     if mate_in_1(white, black, self.n, self.m):
+        #         h += 900
+        #     elif mate_in_2(black, white, self.n, self.m):
+        #         h -= 800
+        # else:
+        #     if mate_in_1(black, white, self.n, self.m):
+        #         h -= 900
+        #     elif mate_in_2(white, black, self.n, self.m):
+        #         h += 800
         return h

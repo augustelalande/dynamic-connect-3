@@ -1,3 +1,12 @@
+"""This script can be used to initiate local games between agents and/or human players.
+
+Example:
+    To initiate a game between two human players execute the following:
+
+        $ python3 local_game.py h h
+
+"""
+
 import argparse
 
 from time import clock
@@ -21,7 +30,7 @@ def play(w='h', b='h', big=0):
             computer.receive_action(action)
             display(computer.white, computer.black, n, m)
     elif w == 'c' and b == 'c': # computer vs computer
-        c1 = SmartAgent(color=0, bigboard=big)
+        c1 = NaiveAgent(color=0, bigboard=big)
         c2 = SmartAgent(color=1, bigboard=big)
         display(c1.white, c1.black, n, m)
         t = clock()
@@ -43,15 +52,13 @@ def play(w='h', b='h', big=0):
                 print("Smart ({}) played: {}".format(c2.color, action))
                 display(c2.white, c2.black, n, m)
         computer = c1
-    else:
+    else: # computer vs human
         computer_color = 0 if w == 'c' else 1
         computer = NaiveAgent(color=computer_color, bigboard=big)
         display(computer.white, computer.black, n, m)
         while not is_terminal(computer.white, computer.black, computer.playing) and not is_repetition(actions):
             if computer.playing == computer_color:
-                t = clock()
                 action = computer.take_action(search_depth=9, alphabeta=True)
-                print(clock() - t)
                 actions += action
                 print("Computer played: {}".format(action))
                 display(computer.white, computer.black, n, m)

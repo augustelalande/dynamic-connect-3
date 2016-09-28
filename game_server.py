@@ -1,4 +1,5 @@
 from telnetlib import Telnet
+# from time import
 
 class GameServer(object):
     """This class provides an abstraction to the telnet server hosting the games.
