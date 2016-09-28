@@ -21,7 +21,7 @@ def play(w='h', b='h', big=0):
             computer.receive_action(action)
             display(computer.white, computer.black, n, m)
     elif w == 'c' and b == 'c': # computer vs computer
-        c1 = NaiveAgent(color=0, bigboard=big)
+        c1 = SmartAgent(color=0, bigboard=big)
         c2 = SmartAgent(color=1, bigboard=big)
         display(c1.white, c1.black, n, m)
         t = clock()
@@ -32,15 +32,15 @@ def play(w='h', b='h', big=0):
                 t = clock()
                 c2.receive_action(action)
                 actions += action
-                print("C1 ({}) played: {}".format(c1.color, action))
+                print("Naive ({}) played: {}".format(c1.color, action))
                 display(c1.white, c1.black, n, m)
             else:
-                action = c2.take_action(search_depth=6)
+                action = c2.take_action()
                 print(clock() - t)
                 t = clock()
                 c1.receive_action(action)
                 actions += action
-                print("C2 ({}) played: {}".format(c2.color, action))
+                print("Smart ({}) played: {}".format(c2.color, action))
                 display(c2.white, c2.black, n, m)
         computer = c1
     else:
@@ -49,7 +49,9 @@ def play(w='h', b='h', big=0):
         display(computer.white, computer.black, n, m)
         while not is_terminal(computer.white, computer.black, computer.playing) and not is_repetition(actions):
             if computer.playing == computer_color:
-                action = computer.take_action()
+                t = clock()
+                action = computer.take_action(search_depth=9, alphabeta=True)
+                print(clock() - t)
                 actions += action
                 print("Computer played: {}".format(action))
                 display(computer.white, computer.black, n, m)
@@ -71,8 +73,8 @@ if __name__ == "__main__":
                         help="White player. Either 'h' for human or 'c' for computer.")
     parser.add_argument("black", choices=('h', 'c'),
                         help="Black player. Either 'h' for human or 'c' for computer.")
-    parser.add_argument('-b', dest="big", default=0,
-                        help="Set to 1 to play on 7x6 board.")
+    parser.add_argument('--big', dest="big", action='store_true',
+                        help="Play on 7x6 board.")
 
     args = parser.parse_args()
     play(w=args.white, b=args.black, big=args.big)

@@ -2,7 +2,6 @@
 
 import argparse
 
-from naive_agent import NaiveAgent
 from smart_agent import SmartAgent
 from game_server import GameServer
 
@@ -13,7 +12,7 @@ def play(gameserv, color, big):
     computer = SmartAgent(color=color, bigboard=big)
     n = 7 if big else 5
     m = 6 if big else 4
-    depth= 5 if big else 7
+    depth= 7 if big else 9
     while not is_terminal(computer.white, computer.black, computer.playing):
         if computer.playing == color:
             action = computer.take_action(search_depth=depth)
@@ -35,8 +34,8 @@ if __name__ == "__main__":
     parser.add_argument("gameID", help="ID used to coordinate with other player.")
     parser.add_argument('color', choices=('white', 'black'),
                         help="Piece color to be used by this player.")
-    parser.add_argument('-b', dest="big", default=0,
-                        help="Set to 1 to play on 7x6 board.")
+    parser.add_argument('--big', dest="big", action='store_true',
+                        help="Play on 7x6 board.")
     parser.add_argument('-s', dest="server", default="132.206.74.211",
                         help="Address of telnet server hosting game.")
     parser.add_argument('-p', dest="port", default=12345, type=int,
