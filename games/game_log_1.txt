@@ -1,0 +1,338 @@
+Improved agent playing as white against a test agent using the naive heuristic on 7x6 grid.
+Improved agent wins.
+
+_,_,_,_,_,_,_
+_,0,_,_,_,1,_
+_,1,_,_,_,0,_
+_,0,_,_,_,1,_
+_,1,_,_,_,0,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 248
+estimated utility: -1
+best move: 24E
+
+depth: 5
+nodes searched: 820
+estimated utility: 2
+best move: 24E
+
+depth: 6
+nodes searched: 2580
+estimated utility: 1
+best move: 24E
+
+depth: 7
+nodes searched: 11389
+estimated utility: 5
+best move: 65W
+
+depth: 8
+nodes searched: 39388
+estimated utility: -14
+best move: 24E
+
+time taken: 9.010338362201788
+SmartAgent (0) played: 24E
+_,_,_,_,_,_,_
+_,0,_,_,_,1,_
+_,1,_,_,_,0,_
+_,_,0,_,_,1,_
+_,1,_,_,_,0,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 789
+estimated utility: 0
+best move: 23S
+
+depth: 5
+nodes searched: 3552
+estimated utility: -1
+best move: 23S
+
+depth: 6
+nodes searched: 14446
+estimated utility: 0
+best move: 25N
+
+depth: 7
+nodes searched: 64461
+estimated utility: 0
+best move: 25N
+
+depth: 8
+nodes searched: 202333
+estimated utility: 1
+best move: 25N
+
+time taken: 9.03226506092637
+NaiveAgent (1) played: 25N
+_,_,_,_,_,_,_
+_,0,_,_,_,1,_
+_,1,_,_,_,0,_
+_,1,0,_,_,1,_
+_,_,_,_,_,0,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 1
+estimated utility: 3
+best move: 65W
+
+depth: 5
+nodes searched: 1
+estimated utility: 3
+best move: 65W
+
+depth: 6
+nodes searched: 1
+estimated utility: 3
+best move: 65W
+
+depth: 7
+nodes searched: 21190
+estimated utility: 19
+best move: 65W
+
+time taken: 9.079119739954773
+SmartAgent (0) played: 65W
+_,_,_,_,_,_,_
+_,0,_,_,_,1,_
+_,1,_,_,_,0,_
+_,1,0,_,_,1,_
+_,_,_,_,0,_,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 1
+estimated utility: 0
+best move: 64W
+
+depth: 5
+nodes searched: 1
+estimated utility: 0
+best move: 64W
+
+depth: 6
+nodes searched: 1
+estimated utility: 0
+best move: 64W
+
+depth: 7
+nodes searched: 1
+estimated utility: 0
+best move: 64W
+
+depth: 8
+nodes searched: 279094
+estimated utility: 1
+best move: 62W
+
+time taken: 9.026101707771488
+NaiveAgent (1) played: 62W
+_,_,_,_,_,_,_
+_,0,_,_,1,_,_
+_,1,_,_,_,0,_
+_,1,0,_,_,1,_
+_,_,_,_,0,_,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 1
+estimated utility: 35
+best move: 34N
+
+depth: 5
+nodes searched: 1
+estimated utility: 35
+best move: 34N
+
+depth: 6
+nodes searched: 4680
+estimated utility: 17
+best move: 34N
+
+depth: 7
+nodes searched: 57183
+estimated utility: 33
+best move: 55W
+
+time taken: 9.07528053311168
+SmartAgent (0) played: 55W
+_,_,_,_,_,_,_
+_,0,_,_,1,_,_
+_,1,_,_,_,0,_
+_,1,0,_,_,1,_
+_,_,_,0,_,_,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 1
+estimated utility: -1
+best move: 64W
+
+depth: 5
+nodes searched: 1
+estimated utility: -1
+best move: 64W
+
+depth: 6
+nodes searched: 1
+estimated utility: -1
+best move: 64W
+
+depth: 7
+nodes searched: 1
+estimated utility: -1
+best move: 64W
+
+depth: 8
+nodes searched: 189717
+estimated utility: 0
+best move: 64W
+
+time taken: 9.006305575264726
+NaiveAgent (1) played: 64W
+_,_,_,_,_,_,_
+_,0,_,_,1,_,_
+_,1,_,_,_,0,_
+_,1,0,_,1,_,_
+_,_,_,0,_,_,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 1
+estimated utility: 33
+best move: 63W
+
+depth: 5
+nodes searched: 1
+estimated utility: 33
+best move: 63W
+
+depth: 6
+nodes searched: 79241
+estimated utility: 29
+best move: 63W
+
+time taken: 9.000627357528998
+SmartAgent (0) played: 63W
+_,_,_,_,_,_,_
+_,0,_,_,1,_,_
+_,1,_,_,0,_,_
+_,1,0,_,1,_,_
+_,_,_,0,_,_,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 3848
+estimated utility: -2
+best move: 54W
+
+depth: 5
+nodes searched: 12962
+estimated utility: -2
+best move: 54W
+
+depth: 6
+nodes searched: 98966
+estimated utility: -2
+best move: 54W
+
+time taken: 9.016430209240326
+NaiveAgent (1) played: 54W
+_,_,_,_,_,_,_
+_,0,_,_,1,_,_
+_,1,_,_,0,_,_
+_,1,0,1,_,_,_
+_,_,_,0,_,_,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 1
+estimated utility: 903
+best move: 53W
+
+depth: 5
+nodes searched: 10787
+estimated utility: 100000
+best move: 53W
+
+time taken: 9.013825964384424
+SmartAgent (0) played: 53W
+_,_,_,_,_,_,_
+_,0,_,_,1,_,_
+_,1,_,0,_,_,_
+_,1,0,1,_,_,_
+_,_,_,0,_,_,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 1
+estimated utility: -2
+best move: 52W
+
+depth: 5
+nodes searched: 1
+estimated utility: -2
+best move: 52W
+
+depth: 6
+nodes searched: 71999
+estimated utility: 1002
+best move: 24W
+
+time taken: 9.000636048880153
+NaiveAgent (1) played: 24W
+_,_,_,_,_,_,_
+_,0,_,_,1,_,_
+_,1,_,0,_,_,_
+1,_,0,1,_,_,_
+_,_,_,0,_,_,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 2330
+estimated utility: 100001
+best move: 43W
+
+time taken: 9.016779838593706
+SmartAgent (0) played: 43W
+_,_,_,_,_,_,_
+_,0,_,_,1,_,_
+_,1,0,_,_,_,_
+1,_,0,1,_,_,_
+_,_,_,0,_,_,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 588
+estimated utility: 1002
+best move: 23W
+
+time taken: 9.018828627098372
+NaiveAgent (1) played: 23W
+_,_,_,_,_,_,_
+_,0,_,_,1,_,_
+1,_,0,_,_,_,_
+1,_,0,1,_,_,_
+_,_,_,0,_,_,_
+_,_,_,_,_,_,_
+
+depth: 4
+nodes searched: 734
+estimated utility: 100003
+best move: 22E
+
+time taken: 9.01930981190337
+SmartAgent (0) played: 22E
+_,_,_,_,_,_,_
+_,_,0,_,1,_,_
+1,_,0,_,_,_,_
+1,_,0,1,_,_,_
+_,_,_,0,_,_,_
+_,_,_,_,_,_,_
+
+White wins!

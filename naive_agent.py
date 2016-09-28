@@ -96,9 +96,9 @@ class NaiveAgent(object):
             self.black[action[0]] = action[1]
 
         if self.playing == 1 and is_winning(self.white): # check for terminal states
-            val = 1000 + depth
+            val = 100000 + depth
         elif self.playing == 0 and is_winning(self.black):
-            val = -1000 - depth
+            val = -100000 - depth
         elif depth == 0: # if depth reaches zero return the estimate value of the game state
             val = self._heuristic()
         else:

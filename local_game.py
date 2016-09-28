@@ -13,6 +13,7 @@ from time import clock
 
 from naive_agent import NaiveAgent
 from smart_agent import SmartAgent
+from smart_agent2 import SmartAgent as SmartAgent2
 
 from utils.state import is_terminal, is_repetition
 from utils.interface import display, get_move
@@ -30,26 +31,26 @@ def play(w='h', b='h', big=0):
             computer.receive_action(action)
             display(computer.white, computer.black, n, m)
     elif w == 'c' and b == 'c': # computer vs computer
-        c1 = NaiveAgent(color=0, bigboard=big)
-        c2 = SmartAgent(color=1, bigboard=big)
+        c1 = SmartAgent(color=1, bigboard=big)
+        c2 = SmartAgent2(color=0, bigboard=big)
         display(c1.white, c1.black, n, m)
         t = clock()
         while not is_terminal(c1.white, c1.black, c1.playing) and not is_repetition(actions):
             if c1.playing == c1.color:
-                action = c1.take_action(search_depth=7)
-                print(clock() - t)
+                action = c1.take_action()
+                print("time taken: {}".format(clock() - t))
                 t = clock()
                 c2.receive_action(action)
                 actions += action
-                print("Naive ({}) played: {}".format(c1.color, action))
+                print("SmartAgent ({}) played: {}".format(c1.color, action))
                 display(c1.white, c1.black, n, m)
             else:
                 action = c2.take_action()
-                print(clock() - t)
+                print("time taken: {}".format(clock() - t))
                 t = clock()
                 c1.receive_action(action)
                 actions += action
-                print("Smart ({}) played: {}".format(c2.color, action))
+                print("NaiveAgent ({}) played: {}".format(c2.color, action))
                 display(c2.white, c2.black, n, m)
         computer = c1
     else: # computer vs human

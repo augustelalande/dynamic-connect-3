@@ -6,6 +6,18 @@ from math import sqrt
 from utils.runs import *
 from utils.state import _get_neighbor_cells
 
+def piece_seperation(pieces):
+    xsum = 0
+    ysum = 0
+    for p in pieces:
+        xsum += p[0]
+        ysum += p[1]
+    center = (round(xsum / 4), round(ysum / 4))
+    seperation = 0
+    for p in pieces:
+        seperation += _distance(center, p)
+    return seperation
+
 def trapped_pieces(pieces, other_pieces, n=5, m=4):
     """Calculate the number of pieces that are unable to move.
 
@@ -51,7 +63,7 @@ def scored_runs(cells, n=5, m=4):
             for c in cells:
                 if c not in row:
                     min_distance = min(min_distance, *[_distance(c, mc) for mc in missing_cells])
-        score += 10 / min_distance
+        score += min_distance
     col = get_col(cells, 2)
     if col:
         missing_cells = _get_missing_cells(col, 'c', n, m)
@@ -60,7 +72,7 @@ def scored_runs(cells, n=5, m=4):
             for c in cells:
                 if c not in col:
                     min_distance = min(min_distance, *[_distance(c, mc) for mc in missing_cells])
-        score += 10 / min_distance
+        score += min_distance
     diag_pp = get_diag_pp(cells, 2)
     if diag_pp:
         missing_cells = _get_missing_cells(diag_pp, 'p', n, m)
@@ -69,7 +81,7 @@ def scored_runs(cells, n=5, m=4):
             for c in cells:
                 if c not in diag_pp:
                     min_distance = min(min_distance, *[_distance(c, mc) for mc in missing_cells])
-        score += 1 / min_distance
+        score += min_distance
     diag_pn = get_diag_pn(cells, 2)
     if diag_pn:
         missing_cells = _get_missing_cells(diag_pn, 'n', n, m)
@@ -78,8 +90,8 @@ def scored_runs(cells, n=5, m=4):
             for c in cells:
                 if c not in diag_pn:
                     min_distance = min(min_distance, *[_distance(c, mc) for mc in missing_cells])
-        score += 1 / min_distance
-    return score
+        score += min_distance
+    return -score
 
 def _distance(c1, c2):
     return abs(c1[0] - c2[0]) + abs(c1[1] - c2[1])
@@ -105,12 +117,13 @@ def pattern_check(cells):
                 return True
     return False
 
+
 def mate_in_1(cells, opponent, n=5, m=4):
     """Check the cells for a mate in 1.
 
     Args:
-        cells (list): Cells pieces which may be in the way.
-        opponent (list): Opponent pieces which may mate the opponent
+        cells (list): Cells pieces which may mate the opponent in 2 moves.
+        opponent (list): Opponent pieces which may br in the way.
         n (int): width of grid
         m (int): height of grid
 
@@ -118,21 +131,21 @@ def mate_in_1(cells, opponent, n=5, m=4):
         Whether mate in 1 will occur.
 
     """
-    row = get_row(opponent, 2)
+    row = get_row(cells, 2)
     if row:
-        if _can_complete(row, [c for c in opponent if c not in row], cells, 'r', False, n, m):
+        if _can_complete(row, [c for c in cells if c not in row], opponent, 'r', False, n, m):
             return True
-    col = get_col(opponent, 2)
+    col = get_col(cells, 2)
     if col:
-        if _can_complete(col, [c for c in opponent if c not in col], cells, 'c', False, n, m):
+        if _can_complete(col, [c for c in cells if c not in col], opponent, 'c', False, n, m):
             return True
-    diag_pp = get_diag_pp(opponent, 2)
+    diag_pp = get_diag_pp(cells, 2)
     if diag_pp:
-        if _can_complete(diag_pp, [c for c in opponent if c not in diag_pp], cells, 'p', False, n, m):
+        if _can_complete(diag_pp, [c for c in cells if c not in diag_pp], opponent, 'p', False, n, m):
             return True
-    diag_pn = get_diag_pn(opponent, 2)
+    diag_pn = get_diag_pn(cells, 2)
     if diag_pn:
-        if _can_complete(diag_pn, [c for c in opponent if c not in diag_pn], cells, 'n', False, n, m):
+        if _can_complete(diag_pn, [c for c in cells if c not in diag_pn], opponent, 'n', False, n, m):
             return True
     return False
 
