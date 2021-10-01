@@ -121,16 +121,17 @@ class SmartAgent(object):
         seen on the current branch.
 
         """
-        self.nodes_searched += 1
-        start_time = clock()
+        self.nodes_searched += 1 # keep track of nodes searched for displaying
+        start_time = clock() # keep track of time to stop the thread
         action = None
 
         state = (tuple(sorted(white, key=lambda x: x[0] + 10 * x[1])),
                  tuple(sorted(black, key=lambda x: x[0] + 10 * x[1])), playing)
 
-        if state in move_sequence: return 0
+        if state in move_sequence: return 0 # check if state was previously encountered in branch
         move_sequence.add(state)
 
+        # check if node is database of stored nodes at the correct depth
         if state in self.nodes and self.nodes[state][2] >= depth and \
                 abs(self.nodes[state][0]) < 1000:
             move_sequence.remove(state)
@@ -138,19 +139,20 @@ class SmartAgent(object):
                 return (self.nodes[state][0], self.nodes[state][1])
             else:
                 return self.nodes[state][0]
-        if playing == 1 and is_winning(white):
-            h = 100000 + depth
+        if playing == 1 and is_winning(white): # check that state is not terminal
+            val = 100000 + depth
         elif playing == 0 and is_winning(black):
-            h = -100000 - depth
-        elif depth == 0:
-            h = self._heuristic(white, black, playing)
+            val = -100000 - depth
+        elif depth == 0: # if depth is zero return heuristic approximation
+            val = self._heuristic(white, black, playing)
         else:
             if not self.big:
                 xstart = 1
                 ystart = 1
                 n = 5
                 m = 4
-            else:
+            else: # this whole set of statements is just to only consider the inner squares
+                  # of a big board for the first few moves.
                 if self.turn > 5:
                     xstart = 1
                     ystart = 1
@@ -163,47 +165,41 @@ class SmartAgent(object):
                     m = 5
 
             if playing == 0: # maximizer
-                h = float("-inf")
+                val = float("-inf")
 
                 for a in get_actions(white, black, n, m, xstart, ystart):
                     modified_cell = self._apply_action(a, white)
-                    v = self._alphabeta_search(depth - 1, white, black, 1, move_sequence, alpha, beta)
-                    if v > h:
-                        h = v
+                    v = self._alphabeta_search(depth - 1, white, black, 1, move_sequence, alpha, beta) # continue searching
+                    if v > val: # update value and action if a better path has been found
+                        val = v
                         action = a
                     self._undo_action(a, white, modified_cell)
 
-                    # if depth == max_depth:
-                    #     print(depth, action_string(white[a[0]], a[1]), v, h)
-
-                    alpha = max(alpha, h) # alpha-beta prunning
+                    alpha = max(alpha, val) # alpha-beta prunning
                     if beta < alpha: break
-                    if clock() - start_time > time_left: return
+                    if clock() - start_time > time_left: return # end search if out of time
             else: # minimizer
-                h = float("inf")
+                val = float("inf")
 
                 for a in get_actions(black, white, n, m, xstart, ystart):
                     modified_cell = self._apply_action(a, black)
                     v = self._alphabeta_search(depth - 1, white, black, 0, move_sequence, alpha, beta)
-                    if v < h:
-                        h = v
+                    if v < val:# update value and action if a better path has been found
+                        val = v
                         action = a
 
                     self._undo_action(a, black, modified_cell)
 
-                    # if depth == max_depth:
-                    #     print(depth, action_string(black[a[0]], a[1]), v)
-
-                    beta = min(beta, h) # alpha-beta prunning
+                    beta = min(beta, val) # alpha-beta prunning
                     if beta < alpha: break
-                    if clock() - start_time > time_left: break
+                    if clock() - start_time > time_left: break # end search if out of time
 
-        self.nodes[state] = (h, action, depth)
+        self.nodes[state] = (val, action, depth) # update state database
         move_sequence.remove(state)
-        if max_depth == depth:
-            return (h, action)
+        if max_depth == depth: # only return the action if at root node
+            return (val, action)
         else:
-            return h
+            return val
 
     def _apply_action(self, action, cells):
         modified_cell = cells[action[0]]
@@ -224,17 +220,11 @@ class SmartAgent(object):
         h += position_score(white, self.n, self.m)
         h -= position_score(black, self.n, self.m)
 
-        # h += trapped_pieces(black, white, self.n, self.m)
-        # h -= trapped_pieces(white, black, self.n, self.m)
-
         h += scored_runs(white, self.n, self.m)
         h -= scored_runs(black, self.n, self.m)
 
         h -= piece_seperation(white)
         h += piece_seperation(black)
-
-        # if pattern_check(white): h += 500
-        # if pattern_check(black): h -= 500
 
         if playing == 0:
             if mate_in_1(white, black, self.n, self.m):
